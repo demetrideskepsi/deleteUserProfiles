@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -19,12 +18,9 @@ public class DeleteUserProfileInterface{
         JButton delete = new JButton("Delete Profile(s)");
         //delete.setSize()
 
-
         // get user profiles
         DeleteUserProfileAlgorithm da = new DeleteUserProfileAlgorithm();
-        //System.out.println(da.getUserProfiles());
 
-        //String[] profiles = {"matt", "joan", "alex","jim","teri" }; // will need a function that grabs all the profiles and puts them into this array, or use arraylist
         ArrayList<String> profiles = new ArrayList<String>(da.getUserProfiles());
         DefaultListModel<String> item = new DefaultListModel<>();  
 
@@ -35,11 +31,12 @@ public class DeleteUserProfileInterface{
 
         JList<String> list = new JList<>(item);         
         list.setBounds(100,100,75,75);
-        //list.addListenerSelectionListener(new ListSelectionListener);
 
+        //delete profiles
         delete.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                System.out.println(list.getSelectedValuesList());
+                //System.out.println(list.getSelectedValuesList());
+                da.deleteUserProfiles(list.getSelectedValuesList().toArray(new String[0]));
                 }
             }
         );
@@ -57,7 +54,7 @@ public class DeleteUserProfileInterface{
 
         // add to frame
         frame.add(panel, BorderLayout.CENTER);
-
+        // make frame visible
         frame.setVisible(true);
     }
 
