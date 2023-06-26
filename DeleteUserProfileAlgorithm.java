@@ -10,7 +10,6 @@ public class DeleteUserProfileAlgorithm{
     
     String dirCommand[] = {"cmd", "/c", "dir", "/b", "C:\\Users"};
     
-
     // gets all user profiles and returns a list
     public ArrayList<String> getUserProfiles(){
 /*
@@ -64,12 +63,10 @@ public class DeleteUserProfileAlgorithm{
             try {           
                 Process process = Runtime.getRuntime().exec(queryCommand);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
                 BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                 String s = null;
 
                 while ((s = stdInput.readLine()) != null) {
-
                     // read profile key and then delete
                     //System.out.println(s);
                     deleteProfile(s,profile);
@@ -90,12 +87,13 @@ public class DeleteUserProfileAlgorithm{
 
     public void deleteProfile(String profile, String name){
 
-        String deleteCommand[] = {"cmd","/c", "reg delete " + profile + " /f && rmdir \"C:\\Users\\" + name + " /s /q"};
-
+        String deleteCommand[] = {"cmd","/c", "reg delete " + "\"" + profile + "\"" + " /f && rmdir \"C:\\Users" + "\\" + name + "\"" + " /s /q"};
+        for (String item : deleteCommand){
+                System.out.print(item + " ");
+        } 
         try {           
             Process process = Runtime.getRuntime().exec(deleteCommand);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String s = null;
 
@@ -111,7 +109,6 @@ public class DeleteUserProfileAlgorithm{
         catch (Exception e){
             System.out.println(e);
         }
-
 
     }
 
@@ -131,5 +128,7 @@ https://learn.microsoft.com/en-us/windows-server/administration/windows-commands
 https://stackoverflow.com/questions/1795808/and-and-or-in-if-statements
 
 https://stackoverflow.com/questions/5642892/java-getruntime-exec-an-exe-that-requires-uac#:~:text=To%20elevate%2C%20you%20have%20to%20use%20ShellExecute%20or,use%20runas%20verb%2Foperation%20to%20force%20UAC%20confirmation%20dialog.
+
+https://stackoverflow.com/questions/30082838/elevate-java-application-while-running
 
  */
