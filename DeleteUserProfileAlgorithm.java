@@ -10,15 +10,53 @@ public class DeleteUserProfileAlgorithm{
     
     String dirCommand[] = {"cmd", "/c", "dir", "/b", "C:\\Users"};
     
+    // gets currently logged in user, to exclude from list
+    public String currentUser(){
+        //Get-WMIObject -class Win32_ComputerSystem | select username | findstr /r '.*\\'
+        String currentUserCommand[] = {"cmd", "/c", "powershell -command \"Get-WMIObject -class Win32_ComputerSystem | select username | findstr /r '.*\\\\'\"" };
+      // see what the command is
+        for (String item : currentUserCommand){
+            System.out.print(item + " ");
+        } 
+        System.out.println();
+        String currentuser = ""; 
+        try {            
+            Process process = Runtime.getRuntime().exec(currentUserCommand);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String s = null;
+
+            while ((s = stdInput.readLine()) != null) {
+                currentuser = s.split("\\\\")[1];
+                //System.out.println(currentuser);
+            }
+            
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return currentuser;
+        
+    }
+
     // gets all user profiles and returns a list
     public ArrayList<String> getUserProfiles(){
-/*
+        /*
+        // see what the command is
+        System.out.println("target users");
         for (String item : dirCommand){
             System.out.print(item + " ");
         } 
         System.out.println();
- */
-        ArrayList<String> profiles = new ArrayList<String>();
+        */
+        String currentuser = currentUser(); // get the current user
+        //ArrayList<String> profiles = new ArrayList<String>();
+        profiles.clear();
 
         try {            
             Process process = Runtime.getRuntime().exec(dirCommand);
@@ -28,7 +66,7 @@ public class DeleteUserProfileAlgorithm{
             String s = null;
 
             while ((s = stdInput.readLine()) != null) {
-                if (! s.equals("Administrator") && ! s.equals("Public")){
+                if (! s.equals("Administrator") && ! s.equals("Public") && ! s.equals(currentuser)){
                     profiles.add(s);
                 }
                 //System.out.println(s);
@@ -47,19 +85,23 @@ public class DeleteUserProfileAlgorithm{
         return profiles;
     }
     
-    // may need get user profile key method
+    // logout user method
+    public void logoutUser(){
+        // logs out users before deleting their profiles
+    }
 
     //delete profiles
     public void deleteUserProfiles(String[] profiles){
         for (String profile : profiles){
             //System.out.println(profile);
             String queryCommand[] = {"cmd", "/c","reg query \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList\" /s /f \"" + profile + "\" | findstr /r ProfileList"};
-/*          // spits out each command that will run
+            // see what command will run
+            System.out.println("query target user(s) reg");  
             for (String item : queryCommand){
                 System.out.print(item + " ");
             } 
             System.out.println();            
-*/
+
             try {           
                 Process process = Runtime.getRuntime().exec(queryCommand);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -81,16 +123,17 @@ public class DeleteUserProfileAlgorithm{
                 System.out.println(e);
             }
 
-
         }
     }
 
     public void deleteProfile(String profile, String name){
-
-        String deleteCommand[] = {"cmd","/c", "reg delete " + "\"" + profile + "\"" + " /f && rmdir \"C:\\Users" + "\\" + name + "\"" + " /s /q"};
+        // if I can't get this one liner to delete the reg entry and folder independently I'll make two commands for it
+        // will also need a way to check for orphaned reg keys and delete them
+        String deleteCommand[] = {"cmd","/c", "reg delete " + "\"" + profile + "\"" + " /f ; rmdir \"C:\\Users" + "\\" + name + "\"" + " /s /q"};
         for (String item : deleteCommand){
                 System.out.print(item + " ");
         } 
+
         try {           
             Process process = Runtime.getRuntime().exec(deleteCommand);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -130,5 +173,7 @@ https://stackoverflow.com/questions/1795808/and-and-or-in-if-statements
 https://stackoverflow.com/questions/5642892/java-getruntime-exec-an-exe-that-requires-uac#:~:text=To%20elevate%2C%20you%20have%20to%20use%20ShellExecute%20or,use%20runas%20verb%2Foperation%20to%20force%20UAC%20confirmation%20dialog.
 
 https://stackoverflow.com/questions/30082838/elevate-java-application-while-running
+
+https://stackoverflow.com/questions/31294747/elevate-process-with-uac-java
 
  */

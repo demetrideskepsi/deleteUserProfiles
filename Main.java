@@ -3,7 +3,7 @@
 public class Main {
 	public static void main(String[] args) {
 		DeleteUserProfileInterface ui = new DeleteUserProfileInterface();
-		ui.runGui();
+		ui.runGUI();
 	}
 
 }

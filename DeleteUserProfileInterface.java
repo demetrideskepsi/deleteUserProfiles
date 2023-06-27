@@ -4,47 +4,53 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class DeleteUserProfileInterface{
-    
-    public void runGui(){
-        JFrame frame = new JFrame();
-        frame.setTitle("Delete User Profile(s)");
-        frame.setSize(400, 400);
-        //frame.setLayout(new BoxLayout());      
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JLabel label = new JLabel("Profile(s)"); // below this will be the available profiles for deletion
-        label.setBounds(0,0, 100,30);  
-        
-        JButton delete = new JButton("Delete Profile(s)");
-        //delete.setSize()
+    DeleteUserProfileAlgorithm da = new DeleteUserProfileAlgorithm(); // get user profiles
 
-        // get user profiles
-        DeleteUserProfileAlgorithm da = new DeleteUserProfileAlgorithm();
+    JFrame frame = new JFrame();
+    JPanel panel = new JPanel();
+    ArrayList<String> profiles = new ArrayList<String>(); // get all the user profiles put them into profiles ArrayList
+    DefaultListModel<String> items = new DefaultListModel<>(); 
+    JList<String> list = new JList<>(items);  
+    JScrollPane scrollPane = new JScrollPane(list);    
+    JLabel label = new JLabel("Profile(s)"); // below this will be the available profiles for deletion
+    JButton delete = new JButton("Delete Profile(s)");
 
-        ArrayList<String> profiles = new ArrayList<String>(da.getUserProfiles());
-        DefaultListModel<String> item = new DefaultListModel<>();  
-
+    // create and reset profiles listed function
+    public void listProfiles(){
+        profiles.clear();
+        profiles.addAll(da.getUserProfiles()); // run getUserProfiles() again
+        items.removeAllElements();
         // go through profiles array and create jlist items for each
         for (String profile : profiles){
-            item.addElement(profile);
+            items.addElement(profile);
         }
+        list.setModel(items);
+        System.out.println("listing complete");
+    }
 
-        JList<String> list = new JList<>(item);         
-        list.setBounds(100,100,75,75);
+    // start ui
+    public void runGUI(){        
+        frame.setTitle("Delete User Profile(s)");
+        frame.setSize(400, 400); 
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        label.setBounds(0,0, 100,30); 
+
+        listProfiles();
         //delete profiles
         delete.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                //System.out.println(list.getSelectedValuesList());
-                da.deleteUserProfiles(list.getSelectedValuesList().toArray(new String[0]));
+                // it won't run unless at least one user is selected
+                if (list.getSelectedValuesList().toArray(new String[0]).length > 0){
+                    da.deleteUserProfiles(list.getSelectedValuesList().toArray(new String[0])); // this deletes the target users
+                    listProfiles();
                 }
             }
-        );
+        });
 
-        JScrollPane scrollPane = new JScrollPane(list);
+        list.setBounds(100,100,75,75);
         scrollPane.setBounds(20,20,50,100);
-
-        JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3,1));
 
         //add to panel
@@ -76,5 +82,7 @@ https://stackoverflow.com/questions/3604407/java-check-for-selection-on-jlist
 https://learn.microsoft.com/en-us/previous-versions/bb756929(v=msdn.10)?redirectedfrom=MSDN
 
 https://docs.oracle.com/javase/7/docs/api/java/awt/Checkbox.html
+
+https://stackoverflow.com/questions/4262669/refresh-jlist-in-a-jframe
 
  */
