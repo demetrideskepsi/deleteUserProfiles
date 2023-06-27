@@ -2,8 +2,9 @@
 
 public class Main {
 	public static void main(String[] args) {
-		DeleteUserProfileInterface ui = new DeleteUserProfileInterface();
-		ui.runGUI();
+		GraphicalInterface gui = new GraphicalInterface(); 
+		//DeleteUserProfileInterface ui = new DeleteUserProfileInterface();
+		gui.runGUI();
 	}
 
 }

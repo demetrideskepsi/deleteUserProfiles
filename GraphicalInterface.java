@@ -2,10 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Map;
 
-public class DeleteUserProfileInterface{
+public class GraphicalInterface{
 
-    DeleteUserProfileAlgorithm da = new DeleteUserProfileAlgorithm(); // get user profiles
+    //DeleteUserProfileAlgorithm da = new DeleteUserProfileAlgorithm();
+    GetUsers gu = new GetUsers(); // get user profiles
+    DeleteUsers du = new DeleteUsers(); // delete profiles
+    LogoutUsers lu = new LogoutUsers();
+    String currentuser = gu.currentUser();
+    //Dictionary<String,Integer> usersToID = new Hashtable<>();
 
     JFrame frame = new JFrame();
     JPanel panel = new JPanel();
@@ -16,17 +22,17 @@ public class DeleteUserProfileInterface{
     JLabel label = new JLabel("Profile(s)"); // below this will be the available profiles for deletion
     JButton delete = new JButton("Delete Profile(s)");
 
-    // create and reset profiles listed function
+    // create and reset profiles listed in interface
     public void listProfiles(){
         profiles.clear();
-        profiles.addAll(da.getUserProfiles()); // run getUserProfiles() again
+        profiles.addAll(gu.getUserProfiles(currentuser)); // run getUserProfiles() again
         items.removeAllElements();
         // go through profiles array and create jlist items for each
         for (String profile : profiles){
             items.addElement(profile);
         }
         list.setModel(items);
-        System.out.println("listing complete");
+        //System.out.println("listing complete");
     }
 
     // start ui
@@ -34,16 +40,17 @@ public class DeleteUserProfileInterface{
         frame.setTitle("Delete User Profile(s)");
         frame.setSize(400, 400); 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         label.setBounds(0,0, 100,30); 
-
-        listProfiles();
+        listProfiles(); // list out profiles in interface
         //delete profiles
         delete.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 // it won't run unless at least one user is selected
+                String[] userList = list.getSelectedValuesList().toArray(new String[0]);
                 if (list.getSelectedValuesList().toArray(new String[0]).length > 0){
-                    da.deleteUserProfiles(list.getSelectedValuesList().toArray(new String[0])); // this deletes the target users
+                    Map<String,Integer> usersToID = lu.userToID(currentuser); // dictionary of users and IDs
+                    lu.logoutUser(usersToID, userList); // logs out target users
+                    du.deleteUserProfiles(userList); // deletes target users
                     listProfiles();
                 }
             }
@@ -63,7 +70,6 @@ public class DeleteUserProfileInterface{
         // make frame visible
         frame.setVisible(true);
     }
-
 }
 
 /*
