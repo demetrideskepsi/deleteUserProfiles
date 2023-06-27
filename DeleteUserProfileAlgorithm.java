@@ -129,7 +129,7 @@ public class DeleteUserProfileAlgorithm{
     public void deleteProfile(String profile, String name){
         // if I can't get this one liner to delete the reg entry and folder independently I'll make two commands for it
         // will also need a way to check for orphaned reg keys and delete them
-        String deleteCommand[] = {"cmd","/c", "reg delete " + "\"" + profile + "\"" + " /f ; rmdir \"C:\\Users" + "\\" + name + "\"" + " /s /q"};
+        String deleteCommand[] = {"cmd","/c", "reg delete " + "\"" + profile + "\"" + " /f && rmdir \"C:\\Users" + "\\" + name + "\"" + " /s /q"};
         for (String item : deleteCommand){
                 System.out.print(item + " ");
         } 
