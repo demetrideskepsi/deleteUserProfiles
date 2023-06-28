@@ -1,195 +1,90 @@
 // gets registry entry list of all users to delete registry entries for those user
 // points to C:\Users\ so it can delete as many user profile directories as selected, along with RegEdits
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class DeleteUsers{
-/*     // for each where matching case gets regex of User Profile Key String and puts it into an ArrayList, then another where those are deleted or in the same loop
-    ArrayList<String> profiles = new ArrayList<String>();
-    
-    String dirCommand[] = {"cmd", "/c", "dir", "/b", "C:\\Users"};
-    
-    // gets currently logged in user, to exclude from list
-    public String currentUser(){
-        //Get-WMIObject -class Win32_ComputerSystem | select username | findstr /r '.*\\'
-        String currentUserCommand[] = {"cmd", "/c", "powershell -command \"Get-WMIObject -class Win32_ComputerSystem | select username | findstr /r '.*\\\\'\"" };
-        
-        // see what the command is
-        for (String item : currentUserCommand){
-            System.out.print(item + " ");
-        } 
-        System.out.println();
-        
-        String currentuser = ""; 
-        try {            
-            Process process = Runtime.getRuntime().exec(currentUserCommand);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String s = null;
-
-            while ((s = stdInput.readLine()) != null) {
-                currentuser = s.split("\\\\")[1];
-                //System.out.println(currentuser);
-            }
-            
-            while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
-            }
-
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
-        return currentuser;
-        
-    }
-
-    // gets all user profiles and returns a list
-    public ArrayList<String> getUserProfiles(){
-        
-        // see what the command is
-        System.out.println("target users");
-        for (String item : dirCommand){
-            System.out.print(item + " ");
-        } 
-        System.out.println();
-        
-        String currentuser = currentUser(); // get the current user
-        userToID(currentuser);
-        //ArrayList<String> profiles = new ArrayList<String>();
-        profiles.clear();
-
-        try {            
-            Process process = Runtime.getRuntime().exec(dirCommand);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String s = null;
-
-            while ((s = stdInput.readLine()) != null) {
-                if (! s.equals("Administrator") && ! s.equals("Public") && ! s.equals(currentuser)){
-                    profiles.add(s);
-                }
-                //System.out.println(s);
-            }
-            
-            while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
-            }
-
-        }
-        catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-
-        return profiles;
-    }
-    
-
-    // session ID to user dict
-    public Dictionary<String,Integer> userToID(String currentuser){
-        ///Pattern pattern = Pattern.compile("[0-9]  +Disc");
-        Dictionary<String,Integer> dict = new Hashtable<>();
-        // $session = ((quser | ? { $_ -notmatch $username -and $_ -notmatch 'SESSIONNAME' }) -split '([0-9]  +Disc)')[1] -replace ' +Disc.*'
-        String[] loggedInUsers = { "cmd", "/c", "powershell -command \"(quser | ? { $_ -notmatch \'" + currentuser + "\' -and $_ -notmatch 'SESSIONNAME' })\"" };
-        
-        // see what the command is
-        System.out.println("logged in users");
-        for (String item : loggedInUsers){
-            System.out.print(item + " ");
-        } 
-        System.out.println();
-        
-        ArrayList<String> quserOutput = new ArrayList<>();
-        try {            
-            Process process = Runtime.getRuntime().exec(loggedInUsers);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String s = null;
-
-            while ((s = stdInput.readLine()) != null) {
-                quserOutput.add(s.toString());
-                //System.out.println(s);
-            }
-            
-            while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
-            }
-
-        }
-        catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-
-        // read out each user line and put the username and ID into the dict
-        for (String user : quserOutput ){
-            String temp1 = "";
-            String temp2 = "";
-            temp1 = user.split(" {5,}")[0];
-            temp1 = temp1.stripLeading();
-            //System.out.println(temp1);
-            temp2 = user.split(" {5,}")[1];
-            temp2 = temp2.split(" +")[0];
-            //System.out.println(temp2);
-            dict.put(temp1,Integer.parseInt(temp2));
-        }
-        
-        return dict;
-    }
-
-    // logout user method
-    public void logoutUser(){
-
-        // will add a method in here that uses dictionaries to grab the username with the Session ID
-
-
-        // logs out users before deleting their profiles
-        
-    }
- */
- 
     //delete profiles
-    public void deleteUserProfiles(String[] usernames){
+    public void deleteUserProfiles(String[] usernames, Map<String,String> userToID){
+        Map<String, String> map = userToID;
+        for ( String user : usernames ){
+            if (map.containsKey(user)){
+                String profileID = map.get(user);
+                System.out.println(user + "'s profileID exists");
+                System.out.println("User: " + user + " ID: " + profileID);                    
+                deleteProfile(profileID, user); // delete the user profile ID
+                deleteDirectory(user); // delete the user directory 
+            }
+            else {                    
+                System.out.println(user + "'s profileID does not exist");
+                System.out.println(user);
+                deleteDirectory(user); //delete the user directory
+            }
+        }
+        System.out.println("Selected Users Deleted");
+    }
+    // get profileID method
+    public Map<String,String> getProfileIDs(String[] usernames){
+        Map<String,String> usernamesToProfileIDs = new Hashtable<>();
         for (String username : usernames){
-            //System.out.println(profile);
-            String queryCommand[] = {"cmd", "/c","reg query \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList\" /s /f \"" + username + "\" | findstr /r ProfileList"};
+            String queryCommand[] = {"cmd", "/c","reg query \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList\" /s /f \"*\\" + username + "\" | findstr /r ProfileList"};
             // see what command will run
-            //System.out.println("Query Target User(s) Registry");  
+            System.out.println("Query Target User(s) Registry:");  
             //for (String item : queryCommand){System.out.print(item + " ");} 
             //System.out.println();            
             try {           
                 Process process = Runtime.getRuntime().exec(queryCommand);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                String s = null;
-                while ((s = stdInput.readLine()) != null) {
-                    // read profile key and then delete
-                    //System.out.println(s);
-                    deleteProfile(s,username);
-                }                
-                while ((s = stdError.readLine()) != null) {
-                    System.out.println(s);
+                String profileID = null; // profile registry ID
+                while ((profileID = stdInput.readLine()) != null) {
+                    System.out.println(profileID);
+                    usernamesToProfileIDs.put(username,profileID);
+                }
+                while ((profileID = stdError.readLine()) != null) {
+                    System.out.println(profileID);
                 }
             }
             catch (Exception e){
                 System.out.println(e);
             }
         }
-        System.out.println("Selected Users Deleted");
+        System.out.println("Usernames to User Profile IDs obtained:");
+        return usernamesToProfileIDs;
     }
-
-    public void deleteProfile(String profile, String name){
-        // if I can't get this one liner to delete the reg entry and folder independently I'll make two commands for it
-        // will also need a way to check for orphaned reg keys and delete them
-        String deleteCommand[] = {"cmd","/c", "reg delete " + "\"" + profile + "\"" + " /f && rmdir \"C:\\Users" + "\\" + name + "\"" + " /s /q"};
+    // delete profile
+    public void deleteProfile(String profileID, String username){
+        String deleteProfileCommand[] = {"cmd","/c", "reg delete /f " + "\"" + profileID + "\""};
         // print deleteCommand
-        for (String item : deleteCommand){System.out.print(item + " ");}
-        System.out.println("Deleting User: " + name);
+        //System.out.println("Delete User's ProfileID commands:");
+        //for (String item : deleteProfileCommand){System.out.print(item + " ");}
+        System.out.println("Deleting " + username + "'s Profile ID: " + profileID);
         try {           
-            Process process = Runtime.getRuntime().exec(deleteCommand);
+            Process process = Runtime.getRuntime().exec(deleteProfileCommand);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String s = null;
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+            }            
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+    // delete directory
+    public void deleteDirectory(String username){
+        String deleteDirCommand[] = {"cmd","/c", "rmdir \"C:\\Users" + "\\" + username + "\"" + " /s /q"};
+        //System.out.println("Delete User's Directory commands:");
+        //for (String item : deleteDirCommand){System.out.print(item + " ");}
+        System.out.println("Deleting " + username + "'s Home Directory");
+        try {           
+            Process process = Runtime.getRuntime().exec(deleteDirCommand);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String s = null;

@@ -5,14 +5,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class GraphicalInterface{
-
-    //DeleteUserProfileAlgorithm da = new DeleteUserProfileAlgorithm();
-    GetUsers gu = new GetUsers(); // get user profiles
-    DeleteUsers du = new DeleteUsers(); // delete profiles
-    LogoutUsers lu = new LogoutUsers();
-    String currentuser = gu.currentUser();
-    //Dictionary<String,Integer> usersToID = new Hashtable<>();
-
+    GetUsers gu = new GetUsers(); // gets user profiles
+    LogoutUsers lu = new LogoutUsers(); // logs user out
+    DeleteUsers du = new DeleteUsers(); // delete user profiles
+    String currentuser = gu.currentUser(); // gets user that's currently logged out, to exclude from list
     JFrame frame = new JFrame();
     JPanel panel = new JPanel();
     ArrayList<String> profiles = new ArrayList<String>(); // get all the user profiles put them into profiles ArrayList
@@ -21,7 +17,6 @@ public class GraphicalInterface{
     JScrollPane scrollPane = new JScrollPane(list);    
     JLabel label = new JLabel("Profile(s)"); // below this will be the available profiles for deletion
     JButton delete = new JButton("Delete Profile(s)");
-
     // create and reset profiles listed in interface
     public void listProfiles(){
         profiles.clear();
@@ -32,9 +27,9 @@ public class GraphicalInterface{
             items.addElement(profile);
         }
         list.setModel(items);
-        //System.out.println("listing complete");
+        System.out.println("User listing complete");
+        System.out.println("---------------------------------------");
     }
-
     // start ui
     public void runGUI(){        
         frame.setTitle("Delete User Profile(s)");
@@ -50,24 +45,19 @@ public class GraphicalInterface{
                 if (list.getSelectedValuesList().toArray(new String[0]).length > 0){
                     Map<String,Integer> usersToID = lu.userToID(currentuser); // dictionary of users and IDs
                     lu.logoutUser(usersToID, userList); // logs out target users
-                    du.deleteUserProfiles(userList); // deletes target users
+                    Map<String,String> usernamesToProfileIDs = du.getProfileIDs(userList);
+                    du.deleteUserProfiles(userList,usernamesToProfileIDs); // deletes target users
                     listProfiles();
                 }
             }
         });
-
         list.setBounds(100,100,75,75);
         scrollPane.setBounds(20,20,50,100);
         panel.setLayout(new GridLayout(3,1));
-
-        //add to panel
         panel.add(label);
         panel.add(scrollPane);
-        panel.add(delete);
-
-        // add to frame
+        panel.add(delete);       
         frame.add(panel, BorderLayout.CENTER);
-        // make frame visible
         frame.setVisible(true);
     }
 }

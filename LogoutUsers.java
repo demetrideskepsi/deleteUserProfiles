@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.io.*;
@@ -14,8 +12,8 @@ public class LogoutUsers{
         String[] loggedInUsers = { "cmd", "/c", "powershell -command \"(quser | ? { $_ -notmatch \'" + currentuser + "\' -and $_ -notmatch 'SESSIONNAME' })\"" };    
         // see what the command is
         System.out.println("Getting Logged in Users");
-        for (String item : loggedInUsers){System.out.print(item + " ");} 
-        System.out.println();   
+        //for (String item : loggedInUsers){System.out.print(item + " ");} 
+        //System.out.println();   
         ArrayList<String> quserOutput = new ArrayList<>();
         try {            
             Process process = Runtime.getRuntime().exec(loggedInUsers);
@@ -34,12 +32,13 @@ public class LogoutUsers{
             System.out.println(e);
             return null;
         }
-        System.out.println("Logged in Users found");
+        System.out.println("Logged in Users found:");
         // read out each user line and put the username and ID into the dictionary
         for (String user : quserOutput ){
+            System.out.println(user);
             String temp1 = "";
             String temp2 = "";
-            temp1 = user.split(" {5,}")[0];
+            temp1 = user.split(" {5,}")[0]; // possible bug if username is too long, max length is 256, will need to test this out
             temp1 = temp1.stripLeading();
             //System.out.println(temp1);
             temp2 = user.split(" {5,}")[1];
@@ -55,7 +54,6 @@ public class LogoutUsers{
     public void logoutUser(Map<String,Integer> userToID, String[] selectedUsersList){  
         System.out.println("start logout user");
         // logs out users before deleting their profiles
-        //Map<String, Integer> map = new HashMap<String, Integer>();
         Map<String, Integer> map = userToID;
         ArrayList<Integer> IDs = new ArrayList<>();
         // key == username, value == ID
@@ -68,7 +66,7 @@ public class LogoutUsers{
                 System.out.println("Check if " + key + " == " + user);
                 if (key.equals(user)){
                     System.out.println("User: " + user + " ID: " + value);
-                    IDs.add(value);
+                    IDs.add(value); // adds the Session ID
                 }
             }
         }
@@ -103,5 +101,7 @@ public class LogoutUsers{
 SOURCES:
 
 https://stackoverflow.com/questions/9371667/foreach-loop-in-java-for-dictionary
+
+https://stackoverflow.com/questions/18280373/iterate-dictionary-in-java
 
 */

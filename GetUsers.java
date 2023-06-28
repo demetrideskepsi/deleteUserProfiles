@@ -67,8 +67,9 @@ public class GetUsers{
             System.out.println(e);
             return null;
         }
-        System.out.println("Selected User's Obtained:");
+        System.out.println("All Users obtained:");
         for (String profile : profiles ) {System.out.println(profile);}
+        System.out.println("---------------------------------------");
         return profiles;
     }       
 }
