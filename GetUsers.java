@@ -6,6 +6,7 @@ public class GetUsers{
     // for each where matching case gets regex of User Profile Key String and puts it into an ArrayList, then another where those are deleted or in the same loop
     ArrayList<String> profiles = new ArrayList<String>();
     String dirCommand[] = {"cmd", "/c", "dir", "/b", "C:\\Users"};
+    // should grab from user dir and profilelist, then run unique to grab just that value
     // gets currently logged in user, to exclude from list
     public String currentUser(){
         //Get-WMIObject -class Win32_ComputerSystem | select username | findstr /r '.*\\'
@@ -17,19 +18,15 @@ public class GetUsers{
         try {            
             Process process = Runtime.getRuntime().exec(currentUserCommand);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String s = null;
-
             while ((s = stdInput.readLine()) != null) {
                 currentuser = s.split("\\\\")[1];
                 //System.out.println(currentuser);
-            }
-            
+            }            
             while ((s = stdError.readLine()) != null) {
                 System.out.println(s);
             }
-
         }
         catch (Exception e){
             System.out.println(e);
@@ -37,7 +34,6 @@ public class GetUsers{
         System.out.println("Current User, " + currentuser + ", Obtained");
         return currentuser;       
     }
-
     // gets all user profiles and returns a list
     public ArrayList<String> getUserProfiles(String currentuser){    
         // see what the command is

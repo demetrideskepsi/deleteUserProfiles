@@ -1,7 +1,6 @@
 // gets registry entry list of all users to delete registry entries for those user
 // points to C:\Users\ so it can delete as many user profile directories as selected, along with RegEdits
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class DeleteUsers{
             // see what command will run
             System.out.println("Query Target User(s) Registry:");  
             //for (String item : queryCommand){System.out.print(item + " ");} 
-            //System.out.println();            
+            System.out.println();            
             try {           
                 Process process = Runtime.getRuntime().exec(queryCommand);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -52,14 +51,15 @@ public class DeleteUsers{
             }
         }
         System.out.println("Usernames to User Profile IDs obtained:");
+        System.out.println();
         return usernamesToProfileIDs;
     }
     // delete profile
     public void deleteProfile(String profileID, String username){
-        String deleteProfileCommand[] = {"cmd","/c", "reg delete /f " + "\"" + profileID + "\""};
+        String deleteProfileCommand[] = {"cmd","/c", "reg delete " + "\"" + profileID + "\" /f"};
         // print deleteCommand
-        //System.out.println("Delete User's ProfileID commands:");
-        //for (String item : deleteProfileCommand){System.out.print(item + " ");}
+        System.out.println("Delete User's ProfileID commands:");
+        for (String item : deleteProfileCommand){System.out.print(item + " ");}
         System.out.println("Deleting " + username + "'s Profile ID: " + profileID);
         try {           
             Process process = Runtime.getRuntime().exec(deleteProfileCommand);

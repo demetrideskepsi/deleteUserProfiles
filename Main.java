@@ -7,8 +7,8 @@ public class Main {
 
 }
 
-// make executable jar file 'jar cfm deleteuserprofiles.jar manifest.txt *.class'
-// make exe jpackage -t exe -i . -n deleteuserprofiles --app-version 1.0 --win-dir-chooser --win-shortcut --win-per-user-install --main-jar deleteuserprofiles.jar
+// make executable jar file 'jar cfm deleteuserprofiles.jar manifest.mf *.class'
+// make exe jpackage -t exe -i . -n deleteuserprofiles --app-version 1.0 --win-dir-chooser --win-shortcut --win-per-user-install --icon reset.ico --main-jar deleteuserprofiles.jar
 // had trouble with this last bit, left it out --add-launcher DeleteUserProfiles=file.properties
 
 /*

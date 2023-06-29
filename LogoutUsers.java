@@ -61,7 +61,7 @@ public class LogoutUsers{
 
             String key = entry.getKey();
             Integer value = entry.getValue();
-            System.out.println("key: " + key + " value: " + value);
+            System.out.println("User: " + key + " Session ID: " + value);
             for ( String user : selectedUsersList ){
                 System.out.println("Check if " + key + " == " + user);
                 if (key.equals(user)){

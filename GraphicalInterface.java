@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class GraphicalInterface{
+    String iconPath = "reset - 16x16.png";
+    ImageIcon icon = new ImageIcon(iconPath);
     GetUsers gu = new GetUsers(); // gets user profiles
     LogoutUsers lu = new LogoutUsers(); // logs user out
     DeleteUsers du = new DeleteUsers(); // delete user profiles
@@ -58,6 +60,7 @@ public class GraphicalInterface{
         panel.add(scrollPane);
         panel.add(delete);       
         frame.add(panel, BorderLayout.CENTER);
+        frame.setIconImage(icon.getImage());
         frame.setVisible(true);
     }
 }
