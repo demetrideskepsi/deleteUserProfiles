@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class GraphicalInterface{
-    String iconPath = "reset - 16x16.png";
+    String iconPath = "profilereset - smaller.png"; // logo credit kuma.vrc - Platinum Creators
     ImageIcon icon = new ImageIcon(iconPath);
     GetUsers gu = new GetUsers(); // gets user profiles
     LogoutUsers lu = new LogoutUsers(); // logs user out

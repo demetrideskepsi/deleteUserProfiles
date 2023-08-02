@@ -10,7 +10,7 @@ public class GetUsers{
     // gets currently logged in user, to exclude from list
     public String currentUser(){
         //Get-WMIObject -class Win32_ComputerSystem | select username | findstr /r '.*\\'
-        String currentUserCommand[] = {"cmd", "/c", "powershell -command \"Get-WMIObject -class Win32_ComputerSystem | select username | findstr /r '.*\\\\'\"" };
+        String currentUserCommand[] = {"cmd", "/c", "powershell -command \"whoami\"" };
         // see what the command is
         //for (String item : currentUserCommand){System.out.print(item + " ");} 
         //System.out.println();
